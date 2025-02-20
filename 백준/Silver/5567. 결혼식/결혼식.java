@@ -18,18 +18,39 @@ public class Main {
             graph.get(b).add(a);
         }
 
-        Set<Integer> invited = new HashSet<>();
-        graph.get(1).stream().forEach(invited::add);
+        boolean[] visited = new boolean[graph.size()];
+        int[] depth = new int[graph.size()];
+        Queue<Integer> queue = new LinkedList<>();
 
-        for (int i = 2; i < graph.size(); i++) {
-            if (graph.get(i).contains(1)) {
-                invited.addAll(graph.get(i));
+        visited[1] = true;
+        depth[1] = 0;
+        queue.add(1);
+
+        while (!queue.isEmpty()) {
+            int cur = queue.poll();
+            if (depth[cur] == 2) {
+                continue;
+            }
+
+            for (int friend : graph.get(cur)) {
+                if (!visited[friend]) {
+                    visited[friend] = true;
+                    depth[friend] = depth[cur] + 1;
+
+                    if (depth[friend] < 2) {
+                        queue.add(friend);
+                    }
+                }
             }
         }
-        invited.remove(1);
-        System.out.println(invited.size());
 
+        int count = 0;
+        for (int i = 2; i <= n; i++) {
+            if (depth[i] == 1 || depth[i] == 2) {
+                count++;
+            }
+        }
+        System.out.println(count);
     }
-
 
 }
